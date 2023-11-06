@@ -1,7 +1,10 @@
-package main
+package handlers
 
-import "net/http"
+import (
+	"github.com/japsty/rssagg"
+	"net/http"
+)
 
 func handlerReadiness(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, 200, struct{}{})
+	main.respondWithJSON(w, 200, struct{}{})
 }

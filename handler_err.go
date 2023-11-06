@@ -1,7 +1,10 @@
-package main
+package handlers
 
-import "net/http"
+import (
+	"github.com/japsty/rssagg"
+	"net/http"
+)
 
 func handlerErr(w http.ResponseWriter, r *http.Request) {
-	respondWithError(w, 400, "Something went wrong")
+	main.respondWithError(w, 400, "Something went wrong")
 }
