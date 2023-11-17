@@ -1,16 +1,15 @@
-package handlers
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/japsty/rssagg"
 	"github.com/japsty/rssagg/internal/database"
 	"net/http"
 	"time"
 )
 
-func (apiCfg *main.apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
@@ -20,7 +19,7 @@ func (apiCfg *main.apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.R
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		main.respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
 		return
 	}
 
@@ -34,19 +33,19 @@ func (apiCfg *main.apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.R
 		UserID:    user.ID,
 	})
 	if err != nil {
-		main.respondWithError(w, 400, fmt.Sprintf("Couldn't create feed: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("Couldn't create feed: %v", err))
 		return
 	}
 
-	main.respondWithJSON(w, 201, main.databaseFeedToFeed(feed))
+	respondWithJSON(w, 201, databaseFeedToFeed(feed))
 }
 
-func (apiCfg *main.apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 	if err != nil {
-		main.respondWithError(w, 400, fmt.Sprintf("Couldn't get feed: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("Couldn't get feed: %v", err))
 		return
 	}
 
-	main.respondWithJSON(w, 201, feeds)
+	respondWithJSON(w, 201, feeds)
 }

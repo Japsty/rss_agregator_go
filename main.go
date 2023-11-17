@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/japsty/rssagg/handlers"
 	"github.com/japsty/rssagg/internal/database"
 	"github.com/joho/godotenv"
 	"log"
@@ -21,11 +20,11 @@ type apiConfig struct {
 }
 
 func main() {
-	feed, err := urlToFeed("https://dev.to/rss")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(feed)
+	////feed, err := urlToFeed("https://dev.to/rss")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//fmt.Println(feed)
 
 	godotenv.Load()
 
@@ -63,8 +62,8 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/healthz", handlers.handlerReadiness)
-	v1Router.Get("/err", handlers.handlerErr)
+	v1Router.Get("/healthz", handlerReadiness)
+	v1Router.Get("/err", handlerErr)
 
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
 	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
@@ -85,7 +84,7 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %v", portString)
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}
