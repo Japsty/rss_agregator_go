@@ -24,7 +24,7 @@ type RSSItem struct {
 	Description string `xml:"description"`
 }
 
-func urlToFeed(url string) (RSSFeed, error) {
+func UrlToFeed(url string) (RSSFeed, error) {
 	httpClient := http.Client{
 		Timeout: 10 * time.Second,
 	}

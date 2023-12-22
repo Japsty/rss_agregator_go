@@ -1,15 +1,18 @@
-package main
+package cmd
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/japsty/rssagg/internal/cmd"
 	"github.com/japsty/rssagg/internal/database"
+	"github.com/japsty/rssagg/internal/middleware"
+	"github.com/japsty/rssagg/internal/models"
 	"net/http"
 	"time"
 )
 
-func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *main.apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
@@ -18,7 +21,7 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		middleware.RespondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
 		return
 	}
 
@@ -30,36 +33,36 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		Name:      params.Name,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
+		middleware.RespondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
 		return
 	}
 
-	respondWithJSON(w, 201, databaseUserToUser(user))
+	middleware.RespondWithJSON(w, 201, models.DatabaseUserToUser(user))
 }
 
-func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
-	respondWithJSON(w, 200, databaseUserToUser(user))
+func (apiCfg *main.apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+	middleware.RespondWithJSON(w, 200, models.DatabaseUserToUser(user))
 }
 
-func (apiCfg *apiConfig) handlerGetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *main.apiConfig) handlerGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := apiCfg.DB.GetAllUsers(r.Context())
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get users: %v", err))
+		middleware.RespondWithError(w, 400, fmt.Sprintf("Couldn't get users: %v", err))
 		return
 	}
 
-	respondWithJSON(w, 201, users)
+	middleware.RespondWithJSON(w, 201, users)
 }
 
-func (apiCfg *apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *main.apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
-		user.ID,
-		10,
+		UserID: user.ID,
+		Limit:  10,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get posts: %v", err))
+		middleware.RespondWithError(w, 400, fmt.Sprintf("Couldn't get posts: %v", err))
 		return
 	}
 
-	respondWithJSON(w, 201, users)
+	middleware.RespondWithJSON(w, 200, models.DatabasePostsToPosts(posts))
 }

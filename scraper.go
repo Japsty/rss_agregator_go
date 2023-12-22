@@ -1,9 +1,10 @@
-package main
+package scraper
 
 import (
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
+	"github.com/japsty/rssagg"
 	"github.com/japsty/rssagg/internal/database"
 	"log"
 	"strings"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-func startScarping(
+func StartScarping(
 	db *database.Queries,
 	concurrency int,
 	timeBetweenRequest time.Duration,
@@ -47,7 +48,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 		return
 	}
 
-	rssFeed, err := urlToFeed(feed.Url)
+	rssFeed, err := main.urlToFeed(feed.Url)
 	if err != nil {
 		log.Println("Error fetching feed: ", err)
 		return
@@ -67,7 +68,6 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 			log.Printf("Couldn't parse dat %v with err %v", item.PubDate, err)
 		}
 
-		//log.Println("Found post", item.Title, "on feed", feed.Name)
 		_, err = db.CreatePost(context.Background(),
 			database.CreatePostParams{
 				ID:          uuid.New(),
