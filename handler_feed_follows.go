@@ -1,11 +1,10 @@
-package cmd
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/japsty/rssagg/internal/cmd"
 	"github.com/japsty/rssagg/internal/database"
 	"github.com/japsty/rssagg/internal/middleware"
 	"github.com/japsty/rssagg/internal/models"
@@ -13,7 +12,7 @@ import (
 	"time"
 )
 
-func (apiCfg *main.apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		FeedID uuid.UUID `json:"feed_id"`
 	}
@@ -42,7 +41,7 @@ func (apiCfg *main.apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *
 	middleware.RespondWithJSON(w, 201, models.DatabaseFeedFollowToFeedFollow(feedFollow))
 }
 
-func (apiCfg *main.apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
 
 	feedFollows, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
 	if err != nil {
@@ -53,7 +52,7 @@ func (apiCfg *main.apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *ht
 	middleware.RespondWithJSON(w, 201, feedFollows)
 }
 
-func (apiCfg *main.apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	feedFollowIDStr := chi.URLParam(r, "feedFollowID")
 	feedFollowId, err := uuid.Parse(feedFollowIDStr)
 	if err != nil {

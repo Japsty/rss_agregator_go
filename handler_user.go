@@ -1,10 +1,9 @@
-package cmd
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/japsty/rssagg/internal/cmd"
 	"github.com/japsty/rssagg/internal/database"
 	"github.com/japsty/rssagg/internal/middleware"
 	"github.com/japsty/rssagg/internal/models"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-func (apiCfg *main.apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
@@ -40,11 +39,11 @@ func (apiCfg *main.apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.R
 	middleware.RespondWithJSON(w, 201, models.DatabaseUserToUser(user))
 }
 
-func (apiCfg *main.apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	middleware.RespondWithJSON(w, 200, models.DatabaseUserToUser(user))
 }
 
-func (apiCfg *main.apiConfig) handlerGetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (apiCfg apiConfig) handlerGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := apiCfg.DB.GetAllUsers(r.Context())
 	if err != nil {
 		middleware.RespondWithError(w, 400, fmt.Sprintf("Couldn't get users: %v", err))
@@ -54,7 +53,7 @@ func (apiCfg *main.apiConfig) handlerGetAllUsers(w http.ResponseWriter, r *http.
 	middleware.RespondWithJSON(w, 201, users)
 }
 
-func (apiCfg *main.apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
 		UserID: user.ID,
 		Limit:  10,

@@ -1,9 +1,9 @@
-package main
+package test
 
 import (
 	"net/http"
 )
 
 func handlerErr(w http.ResponseWriter, r *http.Request) {
-	respondWithError(w, 400, "Something went wrong")
+	//main.respondWithError(w, 400, "Something went wrong")
 }

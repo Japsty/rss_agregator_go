@@ -1,10 +1,9 @@
-package scraper
+package main
 
 import (
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
-	"github.com/japsty/rssagg"
 	"github.com/japsty/rssagg/internal/database"
 	"log"
 	"strings"
@@ -48,7 +47,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 		return
 	}
 
-	rssFeed, err := main.urlToFeed(feed.Url)
+	rssFeed, err := urlToFeed(feed.Url)
 	if err != nil {
 		log.Println("Error fetching feed: ", err)
 		return

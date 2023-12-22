@@ -1,10 +1,9 @@
-package cmd
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/japsty/rssagg/internal/cmd"
 	"github.com/japsty/rssagg/internal/database"
 	"github.com/japsty/rssagg/internal/middleware"
 	"github.com/japsty/rssagg/internal/models"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-func (apiCfg *main.apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
@@ -43,7 +42,7 @@ func (apiCfg *main.apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.R
 	middleware.RespondWithJSON(w, 201, models.DatabaseFeedToFeed(feed))
 }
 
-func (apiCfg *main.apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+func (apiCfg apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 	if err != nil {
 		middleware.RespondWithError(w, 400, fmt.Sprintf("Couldn't get feed: %v", err))

@@ -6,7 +6,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/japsty/rssagg/internal/database"
-	"github.com/japsty/rssagg/internal/scraper"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -43,7 +42,7 @@ func main() {
 	}
 
 	db := database.New(conn)
-	go scraper.StartScarping(db, 10, time.Minute)
+	go StartScarping(db, 10, time.Minute)
 
 	router := chi.NewRouter()
 
